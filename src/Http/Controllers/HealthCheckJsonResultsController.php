@@ -16,9 +16,12 @@ class HealthCheckJsonResultsController
             Artisan::call(RunHealthChecksCommand::class);
         }
 
-        $checkResults = $resultStore->latestResults();
+        $latestResults = $resultStore->latestResults();
 
-        return response($checkResults?->toJson() ?? '')
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        return response($latestResults?->toJson() ?? '')
+            ->withHeaders([
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+                'Content-Type' => 'application/json',
+            ]);
     }
 }

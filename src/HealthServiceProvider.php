@@ -3,11 +3,13 @@
 namespace Spatie\Health;
 
 use Illuminate\Support\Facades\Route;
+use Spatie\Health\Checks\CheckingItem;
 use Spatie\Health\Commands\ListHealthChecksCommand;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 use Spatie\Health\Components\Logo;
 use Spatie\Health\Components\StatusIndicator;
+use Spatie\Health\Facades\Health as HealthInstance;
 use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 use Spatie\Health\Http\Middleware\RequiresSecret;
 use Spatie\Health\ResultStores\ResultStore;
@@ -47,6 +49,8 @@ class HealthServiceProvider extends PackageServiceProvider
         $this->app->make(Health::class)->inlineStylesheet(file_get_contents(__DIR__.'/../resources/dist/health.min.css'));
 
         $this->registerOhDearEndpoint();
+
+        $this->preloading();
     }
 
     protected function registerOhDearEndpoint(): self
@@ -63,9 +67,18 @@ class HealthServiceProvider extends PackageServiceProvider
             return $this;
         }
 
-        Route::get(config('health.oh_dear_endpoint.url'), HealthCheckJsonResultsController::class)
-            ->middleware(RequiresSecret::class);
+        Route::get(config('health.oh_dear_endpoint.url'), HealthCheckJsonResultsController::class);
+
+        if (config('health.oh_dear_endpoint.enabled_secret')) {
+            Route::middleware(RequiresSecret::class);
+        }
 
         return $this;
     }
+
+    protected function preloading(): void
+    {
+        HealthInstance::checks(CheckingItem::getChecks());
+    }
+
 }

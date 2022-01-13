@@ -2,6 +2,15 @@
 
 return [
 
+    'checks' => [
+        'cache'         => false,   // boolean|string(driver name)
+        'DB_connection' => false,   // boolean|string(connection name)
+        'debug'         => false,   // boolean
+        'env'           => false,   // boolean|string[default: production]
+        'ping'          => false,   // string(url)
+        'redis'         => false,   // boolean|string(connection name)
+    ],
+
     /*
      * A result store is responsible for saving the results of the checks. The
      * `EloquentHealthResultStore` will save results in the database. You
@@ -96,6 +105,7 @@ return [
         /*
          * The secret that is displayed at the Application Health settings at Oh Dear.
          */
+        'enable_secret' => true,
         'secret' => env('OH_DEAR_HEALTH_CHECK_SECRET'),
 
         /*

@@ -78,9 +78,16 @@ class StoredCheckResults
 
     public function toJson(): string
     {
+        $results = $this->storedCheckResults->map(fn (StoredCheckResult $line) => $line->toArray());
+
+        $hasFailed = in_array(true, array_map(function ($line) {
+            return $line['status'] == 'failed';
+        }, $results->toArray()));
+
         return (string)json_encode([
             'finishedAt' => $this->finishedAt->getTimestamp(),
-            'checkResults' => $this->storedCheckResults->map(fn (StoredCheckResult $line) => $line->toArray()),
+            'checkResults' => $results,
+            'isAllHealth' => $hasFailed ? 'unhealth' : 'health',
         ]);
     }
 }
