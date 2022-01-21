@@ -47,7 +47,7 @@ class HealthServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->app->make(Health::class)->inlineStylesheet(file_get_contents(__DIR__.'/../resources/dist/health.min.css'));
-
+        
         $this->registerOhDearEndpoint();
 
         $this->preloading();
@@ -59,10 +59,6 @@ class HealthServiceProvider extends PackageServiceProvider
             return $this;
         }
 
-        if (! config('health.oh_dear_endpoint.secret')) {
-            return $this;
-        }
-
         if (! config('health.oh_dear_endpoint.url')) {
             return $this;
         }
@@ -70,6 +66,10 @@ class HealthServiceProvider extends PackageServiceProvider
         Route::get(config('health.oh_dear_endpoint.url'), HealthCheckJsonResultsController::class);
 
         if (config('health.oh_dear_endpoint.enabled_secret')) {
+            if (! config('health.oh_dear_endpoint.secret')) {
+                return $this;
+            }
+
             Route::middleware(RequiresSecret::class);
         }
 
