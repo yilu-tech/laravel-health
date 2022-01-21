@@ -16,9 +16,12 @@ class HealthCheckJsonResultsController
             Artisan::call(RunHealthChecksCommand::class);
         }
 
-        $latestResults = $resultStore->latestResults();
+        $latestResults = $resultStore->latestResults()->toJson();
 
-        return response($latestResults?->toJson() ?? '')
+        $statusCode = str_contains($latestResults, 'unhealth') ? 503 : 200;
+
+        return response($latestResults ?? '')
+            ->setStatusCode($statusCode)
             ->withHeaders([
                 'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
                 'Content-Type' => 'application/json',
