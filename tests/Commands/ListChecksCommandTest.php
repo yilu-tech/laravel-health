@@ -14,5 +14,23 @@ it('thrown no exceptions with a check registered', function () {
         FakeUsedDiskSpaceCheck::new(),
     ]);
 
-    artisan(ListHealthChecksCommand::class)->assertSuccessful();
+    artisan(ListHealthChecksCommand::class, ['--fresh' => true])->assertSuccessful();
+});
+
+it('has an option that will let the command fail when a check fails', function () {
+    $fakeDiskSpaceCheck = FakeUsedDiskSpaceCheck::new();
+
+    Health::checks([
+        $fakeDiskSpaceCheck,
+    ]);
+
+    $fakeDiskSpaceCheck->fakeDiskUsagePercentage(0);
+    artisan('health:list')->assertSuccessful();
+    artisan('health:list --fail-command-on-failing-check')->assertSuccessful();
+
+    $fakeDiskSpaceCheck->fakeDiskUsagePercentage(100);
+
+    artisan('health:check')->assertSuccessful();
+    artisan('health:list')->assertSuccessful();
+    artisan('health:list --fail-command-on-failing-check')->assertFailed();
 });

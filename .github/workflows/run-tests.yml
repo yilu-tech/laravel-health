@@ -1,10 +1,6 @@
 name: run-tests
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -14,9 +10,11 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php: [8.1, 8.0]
-        laravel: [8.*]
-        stability: [prefer-lowest, prefer-stable]
+        laravel: [9.*, 8.*]
+        stability: [prefer-stable]
         include:
+          - laravel: 9.*
+            testbench: 7.*
           - laravel: 8.*
             testbench: ^6.23
 

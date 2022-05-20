@@ -26,5 +26,6 @@ If you have created [a custom check](/docs/laravel-health/v1/basic-usage/creatin
 
 Here's a list of third party packages:
 
-- [SSL certificate expiration](ssl-certificate-expiration)
+- [Env vars](https://github.com/encodia/laravel-health-env-vars)
+- [SSL certificate expiration](https://github.com/victord11/ssl-certification-health-check)
 
